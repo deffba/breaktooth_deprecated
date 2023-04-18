@@ -36,12 +36,14 @@
             const ctx = canvas.getContext("2d");
 
             let x = canvas.width / 2; //ball position
-            let y = canvas.height - 40;
+            let y = canvas.height - 41;
 
             let dx = 2;
             let dy = -2;
 
             let score = 0;
+
+            let lives = 3;
 
 
             //bricks
@@ -158,20 +160,35 @@
                 ctx.closePath();
             }
 
+            function drawLives() {
+                ctx.font = "16px Arial";
+                ctx.fillStyle = "#0095DD";
+                ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 20)
+            }
+
             //physics
             function edgeCollision() {
+                //sides
+                if (x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
+                    dx = -dx;
+                }
+                
                 //top and bottom
                 if (y + dy < ballRadius ) { //top
                     dy = -dy;
                 } else if (y + dy > canvas.height - ballRadius) { //bottom
-                    alert('GAME OVER')
-                    document.location.reload();
-                    clearInterval(interval);   
-                }
-
-                //sides
-                if (x + dx < ballRadius || x + dx > canvas.width - ballRadius) {
-                    dx = -dx;
+                    lives--;
+                    if (!lives) {
+                        alert("GAME OVER");
+                        document.location.reload();
+                        clearInterval(interval);
+                    } else {
+                        x = canvas.width / 2;
+                        y = canvas.height - 41;
+                        dx = 2;
+                        dy = -2;
+                        paddleX = (canvas.width - paddleWidth) / 2;
+                    }
                 }
             }
 
@@ -200,6 +217,7 @@
                 if (y >= 280 && y <= 300) { //top & bottom
                     if (x >= paddleX && x <= (paddleX + 75)) {
                         dy = -dy;
+                        dx = -dx;
                     }
                 }
 
@@ -267,15 +285,18 @@
                 drawBall();
                 drawPaddle();
                 drawScore();
+                drawLives();
                 collisionDetection();
-                x += dx;
-                y += dy;
+                paddleCollision();
                 edgeCollision();
+
+                
                 paddleMove();
                 mouseMovePaddle();
-                paddleCollision();
-            }
 
+                x += dx;
+                y += dy;
+            }
             const interval = setInterval(draw, 10);
 
 
