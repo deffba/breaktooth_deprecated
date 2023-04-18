@@ -161,8 +161,12 @@
             //physics
             function edgeCollision() {
                 //top and bottom
-                if (y + dy < ballRadius || y + dy > canvas.height - ballRadius ) {
+                if (y + dy < ballRadius ) { //top
                     dy = -dy;
+                } else if (y + dy > canvas.height - ballRadius) { //bottom
+                    alert('GAME OVER')
+                    document.location.reload();
+                    clearInterval(interval);   
                 }
 
                 //sides
@@ -179,8 +183,11 @@
                         if (b.status === 1){
                         if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
                             dy = -dy;
-                            b.status--; //remove brick
+                            b.status--; //damage brick
                             score++; //increase score
+                            if (score === brickRowCount * brickColumnCount) {
+                                gameWon();
+                            }
                             }
                         }
                     }
@@ -243,6 +250,12 @@
                 ctx.fillText(`Score: ${score}`, 8, 20);
             }
 
+            function gameWon() {
+                alert("YOU WIN, CONGRATULATIONS!");
+                document.location.reload();
+                clearInterval(interval);
+            }
+
             
 
 
@@ -263,7 +276,7 @@
                 paddleCollision();
             }
 
-            setInterval(draw, 10);
+            const interval = setInterval(draw, 10);
 
 
 
