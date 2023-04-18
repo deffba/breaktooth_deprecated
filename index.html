@@ -2,7 +2,7 @@
 <html lang="en-US">
     <head>
         <meta charset="utf-8" />
-        <title>Gamedev Canvas Workshop</title>
+        <title>Breaktooth 0.1</title>
         <style>
             * {
                 padding: 0;
@@ -41,6 +41,7 @@
             let dx = 2;
             let dy = -2;
 
+
             //bricks
             const brickRowCount = 3;
             const brickColumnCount = 5;
@@ -48,14 +49,14 @@
             const brickHeight = 20;
             const brickPadding = 10;
             const brickOffsetTop = 30;
-            const brickOffsetLeft = 30;
+            const brickOffsetLeft = 30; //55 to centre w/o padding
 
             const bricks = [];
 
             for (let c = 0; c < brickColumnCount; c++) {
                 bricks[c] = [];
                 for (let r = 0; r < brickRowCount; r++) {
-                    bricks[c][r] = {x: 0, y: 0};
+                    bricks[c][r] = {x: 0, y: 0, status: 1};
                 }
             }
 
@@ -64,18 +65,20 @@
               function drawBricks() {
                 for (let c = 0; c < brickColumnCount; c++) {
                     for (let r = 0; r < brickRowCount; r++) {
-                        const brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
-                        const brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
-                        bricks[c] [r].x = brickX;
-                        bricks[c] [r].y = brickY;
-                        ctx.beginPath();
-                        ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                        ctx.fillStyle = "#0095DD";
-                        ctx.fill();
-                        ctx.closePath();
+                        if (bricks[c] [r].status === 1) {
+                            const brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
+                            const brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
+                            bricks[c] [r].x = brickX;
+                            bricks[c] [r].y = brickY;
+                            ctx.beginPath();
+                            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                            ctx.fillStyle = "#0095DD";
+                            ctx.fill();
+                            ctx.closePath();
+                            }
+                        }
                     }
                 }
-              }
   
             //ball
             const ballRadius = 10;
@@ -166,15 +169,32 @@
                 }
             }
 
+            //ball & brick collisions
+            function collisionDetection() {
+                for (let c = 0; c < brickColumnCount; c++) {
+                    for (let r = 0; r < brickRowCount; r++) {
+                        const b = bricks[c] [r];
+                        if (b.status === 1){
+                        if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+                            dy = -dy;
+                            b.status = 0;
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            //ball colliding with paddle
             function paddleCollision() {
-                if (y >= 280 && y <= 300) {
+                if (y >= 280 && y <= 300) { //top & bottom
                     if (x >= paddleX && x <= (paddleX + 75)) {
                         dy = -dy;
                     }
                 }
 
-                if (y >= 281 && y <= 299) {
-                    if (x >= paddleX && x <= (paddleX + 75)) {
+                if (y >= 281 && y <= 299) { //sides
+                    if (x >= paddleX && x <= (paddleX + 75) ) {
                         dx = -dx;
                     }
                 }
@@ -211,6 +231,14 @@
             document.addEventListener('keydown', keyDownHandler, false);
             document.addEventListener('keyup', keyUpHandler, false)
 
+
+            //game logic
+
+            // function drawScore() {
+            //     ctx.font = "16px Arial";
+            //     ctx.fillStyl
+            // }
+
             
 
 
@@ -221,6 +249,7 @@
                 drawBricks();
                 drawBall();
                 drawPaddle();
+                collisionDetection();
                 x += dx;
                 y += dy;
                 edgeCollision();
