@@ -41,6 +41,8 @@
             let dx = 2;
             let dy = -2;
 
+            let score = 0;
+
 
             //bricks
             const brickRowCount = 3;
@@ -177,7 +179,8 @@
                         if (b.status === 1){
                         if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
                             dy = -dy;
-                            b.status = 0;
+                            b.status = 0; //remove brick
+                            score++; //increase score
                             }
                         }
                     }
@@ -234,10 +237,11 @@
 
             //game logic
 
-            // function drawScore() {
-            //     ctx.font = "16px Arial";
-            //     ctx.fillStyl
-            // }
+            function drawScore() {
+                ctx.font = "16px Arial";
+                ctx.fillStyle = "0095DD";
+                ctx.fillText(`Score: ${score}`, 8, 20);
+            }
 
             
 
@@ -249,6 +253,7 @@
                 drawBricks();
                 drawBall();
                 drawPaddle();
+                drawScore();
                 collisionDetection();
                 x += dx;
                 y += dy;
